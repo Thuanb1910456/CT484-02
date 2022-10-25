@@ -41,6 +41,13 @@ Future<void> fetchProducts([bool filterByUser = false]) async {
       notifyListeners();
     }
   }
+  Future<void> toggleFavoriteStatus(Product product) async{
+    final savedStatus = product.isFavorite;
+    product.isFavorite = !savedStatus;
+    if(!await _productsService.saveFavoriteStatus(product)){
+      product.isFavorite = savedStatus;
+    }
+  }
   final List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -92,10 +99,6 @@ Future<void> fetchProducts([bool filterByUser = false]) async {
 
   Product findById(String id) {
     return _items.firstWhere((prod) => prod.id == id);
-  }
-  void toggleFavoriteStatus(Product product) {
-    final savedStatus = product.isFavorite;
-    product.isFavorite = !savedStatus;
   }
 }
 
