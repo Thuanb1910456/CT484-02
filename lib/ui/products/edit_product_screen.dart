@@ -68,7 +68,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   Future<void> _saveForm() async {
-    final isValid  = _editForm.currentState!.validate();
+    final isValid = _editForm.currentState!.validate();
     if (!isValid) {
       return;
     }
@@ -80,10 +80,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     try {
       final productsManager = context.read<ProductManager>();
-      if(_editedProduct.id != null) {
-        productsManager.updateProduct(_editedProduct);
+      if (_editedProduct.id != null) {
+        await productsManager.updateProduct(_editedProduct);
       } else {
-        productsManager.addProduct(_editedProduct);
+        await productsManager.addProducts(_editedProduct);
       }
     } catch (error) {
       await showErrorDialog(context, 'Something went wrong.');
@@ -93,7 +93,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       _isLoading = false;
     });
 
-    if(mounted) {
+    if (mounted) {
       Navigator.of(context).pop();
     }
   }
@@ -111,23 +111,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
         ],
       ),
       body: _isLoading
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _editForm,
-              child: ListView(
-                children: <Widget>[
-                  buildTitleField(),
-                  buildPriceField(),
-                  buildDescriptionField(),
-                  buildProductPreview(),
-                ],
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _editForm,
+                child: ListView(
+                  children: <Widget>[
+                    buildTitleField(),
+                    buildPriceField(),
+                    buildDescriptionField(),
+                    buildProductPreview(),
+                  ],
+                ),
               ),
             ),
-          ),
     );
   }
 
@@ -138,7 +138,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       textInputAction: TextInputAction.next,
       autofocus: true,
       validator: (value) {
-        if(value!.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please provide a value.';
         }
         return null;
@@ -156,13 +156,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
       textInputAction: TextInputAction.next,
       keyboardType: TextInputType.number,
       validator: (value) {
-        if(value!.isEmpty) {
-          return 'Please enter a price.' ;
+        if (value!.isEmpty) {
+          return 'Please enter a price.';
         }
-        if(double.tryParse(value) == null) {
+        if (double.tryParse(value) == null) {
           return 'Please enter valid number.';
         }
-        if(double.parse(value) <= 0) {
+        if (double.parse(value) <= 0) {
           return 'Please enter a number greater than zero.';
         }
         return null;
@@ -180,10 +180,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
       maxLines: 3,
       keyboardType: TextInputType.multiline,
       validator: (value) {
-        if(value!.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter a description.';
         }
-        if(value.length < 10) {
+        if (value.length < 10) {
           return 'Should be at least 10 characters long';
         }
         return null;
@@ -212,17 +212,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ),
           ),
           child: _imageUrlController.text.isEmpty
-            ? const Text('Enter a URL')
-            : FittedBox(
-              child: Image.network(
-                _imageUrlController.text,
-                fit: BoxFit.cover,
-              ),
-            ),
+              ? const Text('Enter a URL')
+              : FittedBox(
+                  child: Image.network(
+                    _imageUrlController.text,
+                    fit: BoxFit.cover,
+                  ),
+                ),
         ),
-        Expanded(
-          child: buildImageURLField()
-        ),  
+        Expanded(child: buildImageURLField()),
       ],
     );
   }
@@ -249,6 +247,4 @@ class _EditProductScreenState extends State<EditProductScreen> {
       },
     );
   }
-
-  
 }
